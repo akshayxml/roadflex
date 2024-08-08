@@ -5,9 +5,27 @@ const prisma = new PrismaClient()
 	Input: array of Users
 	Output: array of email addresses (i.e. array of strings)
  */
+
 function validateWalletItems(data: any): string[] {
-	const validation: string[] = []; 
+	const validation: string[] = [];
 	//Write your code here
+	data.forEach((user: any, index: number) => {
+		let userBalance = user.userWallet ? user.userWallet.walletBalance : 0;
+		let userWalletItemTotal = 0;
+		if(user.userWalletItem){
+			user.userWalletItem.forEach((userWalletItem: any) => {
+				if(userWalletItem.type === "credit"){
+					userWalletItemTotal += userWalletItem.amount;
+				}
+				else{
+					userWalletItemTotal -= userWalletItem.amount;
+				}
+			})
+		}
+		if(userBalance !== userWalletItemTotal){
+			validation.push(user.email)
+		}
+	})
 	return validation;
 }
 
@@ -113,10 +131,10 @@ async function main() {
 	})
 	validateWalletItems(users);
 	calculateAdminCash(users);
-	const queried = await prisma.user.findMany(query1);
-	console.log(queried);
-	const updated = await prisma.user.update(query2);
-	console.log(updated);
+	// const queried = await prisma.user.findMany(query1);
+	// console.log(queried);
+	// const updated = await prisma.user.update(query2);
+	// console.log(updated);
 }
 
 main()
