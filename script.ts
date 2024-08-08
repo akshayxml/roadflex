@@ -57,6 +57,24 @@ function calculateAdminCash(data: any): number {
  */
 const query1 = {
 	//Write your code here
+	where:{
+		AND: [
+			{
+				active: true
+			},
+			{
+				createdAt: {
+					gte: new Date("2022-12-01"),
+					lt: new Date("2023-01-01"),
+				}
+			},
+			{
+				classification: {
+					contains: "logistics",
+				}
+			}
+		]
+	}
 }
 
 /*  Part IV
@@ -143,8 +161,8 @@ async function main() {
 	})
 	validateWalletItems(users);
 	calculateAdminCash(users);
-	// const queried = await prisma.user.findMany(query1);
-	// console.log(queried);
+	const queried = await prisma.user.findMany(query1);
+	console.log(queried);
 	// const updated = await prisma.user.update(query2);
 	// console.log(updated);
 }
