@@ -9,23 +9,25 @@ const prisma = new PrismaClient()
 function validateWalletItems(data: any): string[] {
 	const validation: string[] = [];
 	//Write your code here
-	data.forEach((user: any, index: number) => {
-		let userBalance = user.userWallet ? user.userWallet.walletBalance : 0;
-		let userWalletItemTotal = 0;
-		if(user.userWalletItem){
-			user.userWalletItem.forEach((userWalletItem: any) => {
-				if(userWalletItem.type === "credit"){
-					userWalletItemTotal += userWalletItem.amount;
-				}
-				else{
-					userWalletItemTotal -= userWalletItem.amount;
-				}
-			})
-		}
-		if(userBalance !== userWalletItemTotal){
-			validation.push(user.email)
-		}
-	})
+	if(data){
+		data.forEach((user: any, index: number) => {
+			let userBalance = user.userWallet ? user.userWallet.walletBalance : 0;
+			let userWalletItemTotal = 0;
+			if(user.userWalletItem){
+				user.userWalletItem.forEach((userWalletItem: any) => {
+					if(userWalletItem.type === "credit"){
+						userWalletItemTotal += userWalletItem.amount;
+					}
+					else{
+						userWalletItemTotal -= userWalletItem.amount;
+					}
+				})
+			}
+			if(userBalance !== userWalletItemTotal){
+				validation.push(user.email)
+			}
+		})
+	}
 	return validation;
 }
 
@@ -34,9 +36,19 @@ function validateWalletItems(data: any): string[] {
 	Output: total admin cash given out in dollars (i.e. number)
  */
 function calculateAdminCash(data: any): number {
-	const totalAmount: number = 0;
-	//Write your code here
-	return totalAmount;
+	let totalAmount: number = 0;
+	if(data){
+		data.forEach((user: any, index: number) => {
+			if(user.userWalletItem){
+				user.userWalletItem.forEach((userWalletItem: any) => {
+					if(userWalletItem.description === "adminCash" && userWalletItem.type === "credit"){
+						totalAmount += userWalletItem.amount;
+					}
+				})
+			}
+		})
+	}
+	return totalAmount/100;
 }
 
 /*  Part III
