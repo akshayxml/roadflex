@@ -73,8 +73,12 @@ const query1 = {
 					contains: "logistics",
 				}
 			}
-		]
-	}
+		],
+	},
+	include: {
+		userWallet: true,
+		userWalletItem: false,
+	},
 }
 
 /*  Part IV
@@ -83,6 +87,29 @@ const query1 = {
  */
 const query2 = {
 	//Write your code here
+	where: {
+		email: 'alex@movingcompany.com'
+	},
+	data:{
+		userWallet: {
+			update: {
+				walletBalance: {
+					decrement: 1280,
+				}
+			}
+		},
+		userWalletItem: {
+			create: {
+				type: 'debit',
+				amount: 1280,
+				description: '',
+			}
+		}
+	},
+	include: {
+		userWallet: true,
+		userWalletItem: true,
+	},
 }
 
 /***********************************
@@ -163,8 +190,8 @@ async function main() {
 	calculateAdminCash(users);
 	const queried = await prisma.user.findMany(query1);
 	console.log(queried);
-	// const updated = await prisma.user.update(query2);
-	// console.log(updated);
+	const updated = await prisma.user.update(query2);
+	console.log(updated);
 }
 
 main()
